@@ -1,0 +1,7 @@
+# Вебинар-бот Боба
+
+Telegram-бот для регистрации на вебинар Боба: сбор контактов, автоматические напоминания и уведомления в канал/группу.
+
+Spec: [`docs/blueprint.md`](docs/blueprint.md).
+
+Built on [agnt-gm.ai](https://agnt-gm.ai). The whole bot is built and refined here as pull requests across successive build passes.
