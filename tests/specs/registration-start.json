@@ -1,20 +1,45 @@
 [
   {
-    "name": "Записаться",
+    "name": "end-to-end registration with validation, admin notification and timezone conversion",
     "steps": [
-      {
+      { "send": { "text": "/start" },
+        "expect": [{ "method": "sendMessage", "payload": { "text": "👋 Welcome! Tap a button below to get started." } }] },
+      { "send": { "callback": "owner:event" },
+        "expect": [{ "method": "sendMessage", "payload": { "text": "Let's set up your webinar. What's the topic?" } }] },
+      { "send": { "text": "Mastering cold outreach" },
+        "expect": [{ "method": "sendMessage", "payload": { "text": "Got it. Send the date and time (YYYY-MM-DD HH:MM)." } }] },
+      { "send": { "text": "2026-07-23 15:00" },
+        "expect": [{ "method": "sendMessage", "payload": { "text": "Thanks. Send the UTC offset (e.g. +03:00 or -05:00)." } }] },
+      { "send": { "text": "+03:00" },
+        "expect": [{ "method": "sendMessage", "payload": { "text": "Last one — send the broadcast link (or type \"none\" to skip)." } }] },
+      { "send": { "text": "https://meet.example/abc" },
+        "expect": [{ "method": "sendMessage", "payload": { "text": "✅ Webinar saved!\n\n📅 Mastering cold outreach\n🗓 When: 2026-07-23 15:00 (UTC+03:00)\n⏱ UTC: 2026-07-23 12:00\n🌐 Broadcast: https://meet.example/abc" } }] },
+      { "send": { "callback": "owner:channel" },
+        "expect": [{ "method": "sendMessage", "payload": { "text": "Send the admin channel or group id (a negative number, like -1001234567890). You can also forward a message from the channel and I'll grab it automatically." } }] },
+      { "send": { "text": "-1001234567890" },
+        "expect": [{ "method": "sendMessage", "payload": { "text": "✅ Admin channel set. New registrations will be posted there." } }] },
+      { "send": { "callback": "registration:start" },
+        "expect": [{ "method": "sendMessage", "payload": { "text": "Let's sign you up for \"Mastering cold outreach\".\n\nWhat's your full name? (name and surname)" } }] },
+      { "send": { "text": "Solo" },
+        "expect": [{ "method": "sendMessage", "payload": { "text": "Please send both your name and surname, e.g. \"Anna Smith\"." } }] },
+      { "send": { "text": "Anna Smith" },
+        "expect": [{ "method": "sendMessage", "payload": { "text": "Thanks, Anna! What's your email address?" } }] },
+      { "send": { "text": "not-an-email" },
+        "expect": [{ "method": "sendMessage", "payload": { "text": "That email doesn't look right — check the spelling and send it again." } }] },
+      { "send": { "text": "anna@example.com" },
+        "expect": [{ "method": "sendMessage", "payload": { "text": "Got it. What's your phone number?" } }] },
+      { "send": { "text": "123" },
+        "expect": [{ "method": "sendMessage", "payload": { "text": "That phone number doesn't look right — send it like +7 999 123 45 67." } }] },
+      { "send": { "text": "+7 999 123 45 67" },
+        "expect": [{ "method": "sendMessage", "payload": { "text": "Here's what you entered:\n\n👤 Name: Anna Smith\n📧 Email: anna@example.com\n📱 Phone: +7 999 123 45 67\n\nDoes this look right? By confirming you agree to receive reminders about this webinar." } }] },
+      { "send": { "callback": "registration:confirm:yes" },
         "expect": [
-          {
-            "method": "sendMessage",
-            "payload": {
-              "text": "Initiate registration flow"
-            }
-          }
-        ],
-        "send": {
-          "callback": "registration:start"
-        }
-      }
+          { "method": "sendMessage", "payload": { "text": "✅ You're registered for \"Mastering cold outreach\"!\n\n📅 Mastering cold outreach\n🗓 When: 2026-07-23 15:00 (UTC+03:00)\n⏱ UTC: 2026-07-23 12:00\n🌐 Broadcast: https://meet.example/abc\n\nI'll remind you 24 hours and 1 hour before it starts. The calendar invite is below 👇" } },
+          { "method": "sendDocument" },
+          { "method": "sendMessage", "payload": { "chat_id": -1001234567890 } }
+        ] },
+      { "send": { "callback": "registration:start" },
+        "expect": [{ "method": "sendMessage", "payload": { "text": "You're already registered for \"Mastering cold outreach\".\n\nIf you changed your mind, send /cancel to cancel your registration." } }] }
     ]
   }
 ]
