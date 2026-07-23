@@ -1,0 +1,20 @@
+[
+  {
+    "name": "Записаться",
+    "steps": [
+      {
+        "expect": [
+          {
+            "method": "sendMessage",
+            "payload": {
+              "text": "Initiate registration flow"
+            }
+          }
+        ],
+        "send": {
+          "callback": "registration:start"
+        }
+      }
+    ]
+  }
+]
