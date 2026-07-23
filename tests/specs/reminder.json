@@ -1,0 +1,37 @@
+[
+  {
+    "name": "reminder delivery to a registered, non-blocked user",
+    "steps": [
+      { "send": { "text": "/start" },
+        "expect": [{ "method": "sendMessage", "payload": { "text": "👋 Welcome! Tap a button below to get started." } }] },
+      { "send": { "callback": "owner:event" },
+        "expect": [{ "method": "sendMessage", "payload": { "text": "Let's set up your webinar. What's the topic?" } }] },
+      { "send": { "text": "Past Webinar" },
+        "expect": [{ "method": "sendMessage", "payload": { "text": "Got it. Send the date and time (YYYY-MM-DD HH:MM)." } }] },
+      { "send": { "text": "2000-01-01 12:00" },
+        "expect": [{ "method": "sendMessage", "payload": { "text": "Thanks. Send the UTC offset (e.g. +03:00 or -05:00)." } }] },
+      { "send": { "text": "+00:00" },
+        "expect": [{ "method": "sendMessage", "payload": { "text": "Last one — send the broadcast link (or type \"none\" to skip)." } }] },
+      { "send": { "text": "none" },
+        "expect": [{ "method": "sendMessage", "payload": { "text": "✅ Webinar saved!\n\n📅 Past Webinar\n🗓 When: 2000-01-01 12:00 (UTC+00:00)\n⏱ UTC: 2000-01-01 12:00\n🌐 Broadcast: —" } }] },
+      { "send": { "callback": "registration:start" },
+        "expect": [{ "method": "sendMessage", "payload": { "text": "Let's sign you up for \"Past Webinar\".\n\nWhat's your full name? (name and surname)" } }] },
+      { "send": { "text": "Bob Jones" },
+        "expect": [{ "method": "sendMessage", "payload": { "text": "Thanks, Bob! What's your email address?" } }] },
+      { "send": { "text": "bob@example.com" },
+        "expect": [{ "method": "sendMessage", "payload": { "text": "Got it. What's your phone number?" } }] },
+      { "send": { "text": "+1 555 123 4567" },
+        "expect": [{ "method": "sendMessage", "payload": { "text": "Here's what you entered:\n\n👤 Name: Bob Jones\n📧 Email: bob@example.com\n📱 Phone: +1 555 123 4567\n\nDoes this look right? By confirming you agree to receive reminders about this webinar." } }] },
+      { "send": { "callback": "registration:confirm:yes" },
+        "expect": [
+          { "method": "sendMessage", "payload": { "text": "✅ You're registered for \"Past Webinar\"!\n\n📅 Past Webinar\n🗓 When: 2000-01-01 12:00 (UTC+00:00)\n⏱ UTC: 2000-01-01 12:00\n🌐 Broadcast: —\n\nI'll remind you 24 hours and 1 hour before it starts. The calendar invite is below 👇" } },
+          { "method": "sendDocument" }
+        ] },
+      { "send": { "callback": "owner:remind" },
+        "expect": [
+          { "method": "sendMessage", "payload": { "text": "⏰ \"Past Webinar\" starts in 1 hour!\n\n📅 Past Webinar\n🗓 When: 2000-01-01 12:00 (UTC+00:00)\n⏱ UTC: 2000-01-01 12:00\n🌐 Broadcast: —" } },
+          { "method": "sendMessage", "payload": { "text": "🔔 Reminders processed: sent 1, skipped 0." } }
+        ] }
+    ]
+  }
+]

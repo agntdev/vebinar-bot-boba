@@ -1,20 +1,37 @@
 [
   {
-    "name": "/cancel",
+    "name": "/cancel with no registration to cancel",
     "steps": [
       {
+        "send": { "text": "/cancel" },
         "expect": [
           {
             "method": "sendMessage",
-            "payload": {
-              "text": "Cancel registration"
-            }
+            "payload": { "text": "You don't have a registration to cancel." }
           }
-        ],
-        "send": {
-          "text": "/cancel"
-        }
+        ]
       }
+    ]
+  },
+  {
+    "name": "/cancel aborts an in-progress registration flow",
+    "steps": [
+      { "send": { "text": "/start" },
+        "expect": [{ "method": "sendMessage", "payload": { "text": "👋 Welcome! Tap a button below to get started." } }] },
+      { "send": { "callback": "owner:event" },
+        "expect": [{ "method": "sendMessage", "payload": { "text": "Let's set up your webinar. What's the topic?" } }] },
+      { "send": { "text": "Quick Talk" },
+        "expect": [{ "method": "sendMessage", "payload": { "text": "Got it. Send the date and time (YYYY-MM-DD HH:MM)." } }] },
+      { "send": { "text": "2026-07-23 15:00" },
+        "expect": [{ "method": "sendMessage", "payload": { "text": "Thanks. Send the UTC offset (e.g. +03:00 or -05:00)." } }] },
+      { "send": { "text": "+00:00" },
+        "expect": [{ "method": "sendMessage", "payload": { "text": "Last one — send the broadcast link (or type \"none\" to skip)." } }] },
+      { "send": { "text": "none" },
+        "expect": [{ "method": "sendMessage", "payload": { "text": "✅ Webinar saved!\n\n📅 Quick Talk\n🗓 When: 2026-07-23 15:00 (UTC+00:00)\n⏱ UTC: 2026-07-23 15:00\n🌐 Broadcast: —" } }] },
+      { "send": { "callback": "registration:start" },
+        "expect": [{ "method": "sendMessage", "payload": { "text": "Let's sign you up for \"Quick Talk\".\n\nWhat's your full name? (name and surname)" } }] },
+      { "send": { "text": "/cancel" },
+        "expect": [{ "method": "sendMessage", "payload": { "text": "Cancelled — nothing was saved. Tap /start to begin again." } }] }
     ]
   }
 ]

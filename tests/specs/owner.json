@@ -1,0 +1,38 @@
+[
+  {
+    "name": "owner exports registrations as a CSV document",
+    "steps": [
+      { "send": { "text": "/start" },
+        "expect": [{ "method": "sendMessage", "payload": { "text": "👋 Welcome! Tap a button below to get started." } }] },
+      { "send": { "callback": "owner:event" },
+        "expect": [{ "method": "sendMessage", "payload": { "text": "Let's set up your webinar. What's the topic?" } }] },
+      { "send": { "text": "Export Talk" },
+        "expect": [{ "method": "sendMessage", "payload": { "text": "Got it. Send the date and time (YYYY-MM-DD HH:MM)." } }] },
+      { "send": { "text": "2026-09-01 18:00" },
+        "expect": [{ "method": "sendMessage", "payload": { "text": "Thanks. Send the UTC offset (e.g. +03:00 or -05:00)." } }] },
+      { "send": { "text": "+05:00" },
+        "expect": [{ "method": "sendMessage", "payload": { "text": "Last one — send the broadcast link (or type \"none\" to skip)." } }] },
+      { "send": { "text": "none" },
+        "expect": [{ "method": "sendMessage", "payload": { "text": "✅ Webinar saved!\n\n📅 Export Talk\n🗓 When: 2026-09-01 18:00 (UTC+05:00)\n⏱ UTC: 2026-09-01 13:00\n🌐 Broadcast: —" } }] },
+      { "send": { "callback": "registration:start" },
+        "expect": [{ "method": "sendMessage", "payload": { "text": "Let's sign you up for \"Export Talk\".\n\nWhat's your full name? (name and surname)" } }] },
+      { "send": { "text": "Carl Reed" },
+        "expect": [{ "method": "sendMessage", "payload": { "text": "Thanks, Carl! What's your email address?" } }] },
+      { "send": { "text": "carl@example.com" },
+        "expect": [{ "method": "sendMessage", "payload": { "text": "Got it. What's your phone number?" } }] },
+      { "send": { "text": "+44 20 7946 0958" },
+        "expect": [{ "method": "sendMessage", "payload": { "text": "Here's what you entered:\n\n👤 Name: Carl Reed\n📧 Email: carl@example.com\n📱 Phone: +44 20 7946 0958\n\nDoes this look right? By confirming you agree to receive reminders about this webinar." } }] },
+      { "send": { "callback": "registration:confirm:yes" },
+        "expect": [
+          { "method": "sendMessage", "payload": { "text": "✅ You're registered for \"Export Talk\"!\n\n📅 Export Talk\n🗓 When: 2026-09-01 18:00 (UTC+05:00)\n⏱ UTC: 2026-09-01 13:00\n🌐 Broadcast: —\n\nI'll remind you 24 hours and 1 hour before it starts. The calendar invite is below 👇" } },
+          { "method": "sendDocument" }
+        ] },
+      { "send": { "callback": "owner:export" },
+        "expect": [{ "method": "sendDocument", "payload": { "caption": "📤 1 registration(s)" } }] },
+      { "send": { "text": "/cancel" },
+        "expect": [{ "method": "sendMessage", "payload": { "text": "Your registration has been cancelled. You can sign up again anytime from the menu." } }] },
+      { "send": { "callback": "owner:export" },
+        "expect": [{ "method": "sendMessage", "payload": { "text": "No registrations to export yet. Once people sign up, you'll get them here as a CSV." } }] }
+    ]
+  }
+]

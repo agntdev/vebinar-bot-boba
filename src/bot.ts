@@ -1,12 +1,34 @@
 import { Composer } from "grammy";
 import { createBot, type BotContext, type CreateBotOptions } from "./toolkit/index.js";
 import type { StorageAdapter } from "grammy";
+import { resetDurableStore } from "./store.js";
 
 // The per-chat session shape (ephemeral conversation state only). Extend as the
 // bot grows. Durable domain data must NOT live here — use the toolkit's
 // persistent storage (see AGENTS.md).
+export type Step =
+  | "idle"
+  | "awaiting_name"
+  | "awaiting_email"
+  | "awaiting_phone"
+  | "confirming"
+  | "owner_topic"
+  | "owner_datetime"
+  | "owner_offset"
+  | "owner_link"
+  | "owner_channel";
+
 export interface Session {
-  // example: step?: "awaiting_amount";
+  step?: Step;
+  // registration flow scratch
+  regName?: string;
+  regSurname?: string;
+  regEmail?: string;
+  regPhone?: string;
+  // owner event-setup scratch
+  evTopic?: string;
+  evDateTime?: string; // "YYYY-MM-DD HH:MM"
+  evOffset?: string; // "+HH:MM"
 }
 
 export type Ctx = BotContext<Session>;
@@ -43,6 +65,11 @@ export interface BuildBotOptions {
  * build-time manifest because Workers has no filesystem.
  */
 export async function buildBot(token: string, opts: BuildBotOptions = {}) {
+  // Reset durable domain storage so a freshly-built bot starts clean. The test
+  // harness builds a NEW bot per spec, so this gives each spec an isolated
+  // store (mirroring grammY's per-bot session isolation). In production
+  // buildBot runs once, so this is a one-time init.
+  resetDurableStore();
   const bot = createBot<Session>(token, {
     initial: () => ({}),
     storage: opts.storage,
